@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, UserCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Logo } from './Logo';
 import { AppointmentModal } from './AppointmentModal';
 import { PatientPortalModal } from './PatientPortalModal';
@@ -11,6 +11,7 @@ export function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPortalModalOpen, setIsPortalModalOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,7 +21,6 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when navigating
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -38,6 +38,40 @@ export function Navbar() {
     navigate('/appointment-confirmation');
   };
 
+  const scrollToSection = (sectionId: string) => {
+    // If not on home page, navigate to home first
+    if (location.pathname !== '/') {
+      navigate('/');
+      // Wait for navigation to complete before scrolling
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const navbarHeight = 64;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - navbarHeight;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const navbarHeight = 64;
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - navbarHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+    setIsOpen(false);
+  };
+
   return (
     <>
       <nav 
@@ -48,15 +82,40 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Logo className="scale-90" />
+              <div 
+                onClick={() => navigate('/')} 
+                className="cursor-pointer"
+              >
+                <Logo className="scale-90" />
+              </div>
             </div>
             
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#home" className="text-gray-700 hover:text-blue-600 transition-colors">Home</a>
-              <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors">Services</a>
-              <a href="#doctors" className="text-gray-700 hover:text-blue-600 transition-colors">Doctors</a>
-              <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">Contact</a>
+              <button 
+                onClick={() => scrollToSection('home')}
+                className="text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => scrollToSection('services')}
+                className="text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                Services
+              </button>
+              <button 
+                onClick={() => scrollToSection('doctors')}
+                className="text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                Doctors
+              </button>
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                Contact
+              </button>
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="bg-blue-600 text-white px-6 py-1.5 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
@@ -89,34 +148,30 @@ export function Navbar() {
         {isOpen && (
           <div className="md:hidden fixed inset-0 z-50 bg-white">
             <div className="pt-20 pb-6 px-4 space-y-4">
-              <a 
-                href="#home" 
-                className="block py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
-                onClick={() => setIsOpen(false)}
+              <button 
+                onClick={() => scrollToSection('home')}
+                className="block w-full text-left py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
               >
                 Home
-              </a>
-              <a 
-                href="#services" 
-                className="block py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
-                onClick={() => setIsOpen(false)}
+              </button>
+              <button 
+                onClick={() => scrollToSection('services')}
+                className="block w-full text-left py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
               >
                 Services
-              </a>
-              <a 
-                href="#doctors" 
-                className="block py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
-                onClick={() => setIsOpen(false)}
+              </button>
+              <button 
+                onClick={() => scrollToSection('doctors')}
+                className="block w-full text-left py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
               >
                 Doctors
-              </a>
-              <a 
-                href="#contact" 
-                className="block py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
-                onClick={() => setIsOpen(false)}
+              </button>
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="block w-full text-left py-3 text-lg text-gray-700 hover:text-blue-600 transition-colors"
               >
                 Contact
-              </a>
+              </button>
               <div className="pt-4 space-y-4">
                 <button 
                   onClick={() => {

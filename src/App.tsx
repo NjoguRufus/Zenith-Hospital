@@ -1,5 +1,5 @@
-import React, { lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { lazy, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Footer } from './components/Footer';
@@ -15,6 +15,17 @@ const EmergencyCare = lazy(() => import('./components/EmergencyCare').then(m => 
 const Contact = lazy(() => import('./components/Contact').then(m => ({ default: m.Contact })));
 const Testimonials = lazy(() => import('./components/Testimonials').then(m => ({ default: m.Testimonials })));
 const AppointmentConfirmation = lazy(() => import('./components/AppointmentConfirmation').then(m => ({ default: m.AppointmentConfirmation })));
+
+// ScrollToTop component to handle navigation
+function ScrollToTop() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+  
+  return null;
+}
 
 function HomePage() {
   return (
@@ -45,6 +56,7 @@ function HomePage() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <main>
@@ -76,4 +88,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
